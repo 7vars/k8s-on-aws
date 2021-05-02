@@ -47,13 +47,13 @@ metadata:
   namespace: keycloak
   annotations:
    kubernetes.io/ingress.class: traefik
-   traefik.ingress.kubernetes.io/rewrite-target: "/"
+   traefik.ingress.kubernetes.io/rewrite-target: "/auth"
 spec:
   rules:
   - host: "$PUBLIC_DOMAIN"
     http:
       paths:
-      - path: /keycloak
+      - path: /auth
         backend:
           serviceName: keycloak-svc
           servicePort: web
