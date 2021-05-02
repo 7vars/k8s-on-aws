@@ -236,7 +236,6 @@ whitelisted_hosts = [
 ]
 EOL
 
-    #if terraform plan -out "$PROJECT_NAME.plan" -var "cluster_name=$CLUSTER_NAME" -var "cluster_domain=$CLUSTER_DOMAIN" -var "vpc_network_index=$NET" -var "region=$REGION" -var "public_domain=$PUBLIC_DOMAIN" -var "node_count=$NODES" -var "max_node_count=$MAX_NODES" -var "autoscaling_group_name=$AUTOSCALING_GROUP" -var "k8s_version=$K8S_VERSION" -var whitelisted_hosts=$WHITELIST; then
     if terraform plan -out "$PROJECT_NAME.plan" -var-file="cluster.tfvars"; then
         printf "Planned\n"
     else 
@@ -256,6 +255,17 @@ createInfra() {
     fi
 }
 
+destroyInfra() {
+    printf "Destroy Infrastructure"
+    if test -f cluster.tfvars; then 
+        terraform destroy -auto-approve -var-file="cluster.tfvars"
+        rm cluster.tfvars
+    else 
+        printf "Variable file not found\n\nAborting\n\n"
+        exit 1
+    fi
+}
+
 case $1 in
     "plan")
     planInfra
@@ -264,7 +274,7 @@ case $1 in
     createInfra
     ;;
     "destroy")
-    terraform destroy -auto-approve -var-file="cluster.tfvars"
+    destroyInfra
     ;;
     "info")
     print
